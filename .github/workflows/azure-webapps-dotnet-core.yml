@@ -31,7 +31,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   build:
@@ -68,6 +67,7 @@ jobs:
   deploy:
     permissions:
       contents: none
+      id-token: write
     runs-on: ubuntu-latest
     needs: build
     environment:

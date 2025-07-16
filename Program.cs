@@ -20,7 +20,7 @@ builder.Configuration.AddAzureKeyVault(
     {
         ManagedIdentityClientId = builder.Configuration["AzureADManagedIdentityClientId"]
     })
-)
+);
 
 var app = builder.Build();
 

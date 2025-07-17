@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
-            .SetMinimumLevel(LogLevel.Trace) // Set minimum logging level
+            .SetMinimumLevel(LogLevel.Information) // Set minimum logging level
             .AddConsole()); // Add Console logging provider
 ILogger logger = loggerFactory.CreateLogger<Program>(); 
         

@@ -11,11 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
-var connectionString = Environment.GetEnvironmentVariable("CUSTOMCONNSTR_AZURE_POSTGRESQL_CONNECTIONSTRING");
-if (connectionString.StartsWith("Server"))
-{
-    Console.WriteLine("Connection string starts with Server");
-}
 if (builder.Environment.IsProduction())
 {
     builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
@@ -57,6 +52,11 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 
 app.MapControllers();
 app.Run();

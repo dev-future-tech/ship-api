@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MySecureWebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+188c8dbecbd999325dd3cfa690e384c8fe8e7d66")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+07303622aba52ba71180d6d209864a588b535951")]
 [assembly: System.Reflection.AssemblyProductAttribute("MySecureWebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MySecureWebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

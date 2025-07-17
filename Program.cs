@@ -3,8 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using Ships.Data;
 using Ships.Repositories;
 using Ships.Services;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
+            .SetMinimumLevel(LogLevel.Trace) // Set minimum logging level
+            .AddConsole()); // Add Console logging provider
+ILogger logger = loggerFactory.CreateLogger<Program>(); 
+        
+logger.LogInformation("Application starting up...");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -12,6 +21,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
 var connectionString = Environment.GetEnvironmentVariable("AZURE_POSTGRESQL_CONNECTIONSTRING");
+if (connectionString.StartsWith("Server"))
+{
+    logger.LogInformation("Connection string starts with Server");
+}
 if (builder.Environment.IsProduction())
 {
     builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));

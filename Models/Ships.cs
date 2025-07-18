@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ships.Models
@@ -10,6 +9,9 @@ namespace Ships.Models
         public int ShipId { get; set; }
 
         [Column("ship_name")]
-        public string ShipName { get; set; }
+        public string? ShipName { get; set; }
+
+        [Column("registry")]
+        public string? Registry { get; set; }
     }
 }

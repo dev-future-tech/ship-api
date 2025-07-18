@@ -21,6 +21,26 @@ namespace MySecureWebApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Ships.Models.Officer", b =>
+                {
+                    b.Property<int>("OfficerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("officer_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OfficerId"));
+
+                    b.Property<string>("OfficerName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Rank")
+                        .HasColumnType("text");
+
+                    b.HasKey("OfficerId");
+
+                    b.ToTable("officers");
+                });
+
             modelBuilder.Entity("Ships.Models.Ship", b =>
                 {
                     b.Property<int>("ShipId")
@@ -30,8 +50,11 @@ namespace MySecureWebApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ShipId"));
 
+                    b.Property<string>("Registry")
+                        .HasColumnType("text")
+                        .HasColumnName("registry");
+
                     b.Property<string>("ShipName")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ship_name");
 

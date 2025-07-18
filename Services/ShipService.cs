@@ -18,7 +18,8 @@ namespace Ships.Services
             var ship = new Ship
             {
                 ShipId = shiptDto.Id,
-                ShipName = shiptDto.Name
+                ShipName = shiptDto.Name,
+                Registry = shiptDto.Registration
             };
 
             await _shipRepository.AddAsync(ship);
@@ -37,10 +38,11 @@ namespace Ships.Services
         public async Task<IEnumerable<ShipResponseDto>> GetAllShipsAsync()
         {
             var ships = await _shipRepository.GetAllAsync();
-            return ships.Select(p => new ShipResponseDto
+            return ships.Select(ship => new ShipResponseDto
             {
-                Id = p.ShipId,
-                Name = p.ShipName
+                Id = ship.ShipId,
+                Name = ship.ShipName,
+                Registration = ship.Registry
             });
         }
 
@@ -54,7 +56,8 @@ namespace Ships.Services
             return new ShipResponseDto
             {
                 Id = ship.ShipId,
-                Name = ship.ShipName
+                Name = ship.ShipName,
+                Registration = ship.Registry
             };
         }
 

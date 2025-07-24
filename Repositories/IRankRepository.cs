@@ -4,9 +4,9 @@ namespace MySecureWebApi.Repositories;
 
 public interface IRankRepository
 {
-    Task<IEnumerable<Rank>> GetAllAsync();
-    Task<Rank> GetByIdAsync(int id);
-    Task AddAsync(Rank rank);
-    Task UpdateAsync(Rank rank);
-    Task DeleteAsync(int rankId);
+    Task<IEnumerable<Rank>> GetRanksAllAsync();
+    Task<Rank> GetRankByIdAsync(int id);
+    Task AddRankAsync(Rank rank);
+    Task UpdateRankAsync(Rank rank);
+    Task DeleteRankAsync(int rankId);
 }

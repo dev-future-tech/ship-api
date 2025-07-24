@@ -6,18 +6,12 @@ namespace MySecureWebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ShipController : ControllerBase
+public class ShipController(IShipService shipService) : ControllerBase
 {
-    private readonly IShipService _shipService;
-    public ShipController(IShipService shipService)
-    {
-        _shipService = shipService;
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var ships = await _shipService.GetAllShipsAsync();
+        var ships = await shipService.GetAllShipsAsync();
         return Ok(ships);
     }
 
@@ -26,7 +20,7 @@ public class ShipController : ControllerBase
     {
         try
         {
-            var ship = await _shipService.GetShipByIdAsync(id);
+            var ship = await shipService.GetShipByIdAsync(id);
             return Ok(ship);
         }
         catch (KeyNotFoundException)
@@ -36,18 +30,18 @@ public class ShipController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(ShipRequestDto shipDto)
+    public async Task<IActionResult> Add([FromBody] ShipRequestDto shipDto)
     {
-        await _shipService.AddShipAsync(shipDto);
+        await shipService.AddShipAsync(shipDto);
         return CreatedAtAction(nameof(GetById), new { id = shipDto.Id }, shipDto);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, ShipRequestDto shipDto)
+    public async Task<IActionResult> Update(int id, [FromBody] ShipRequestDto shipDto)
     {
         try
         {
-            await _shipService.UpdateShipAsync(id, shipDto);
+            await shipService.UpdateShipAsync(id, shipDto);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -61,7 +55,7 @@ public class ShipController : ControllerBase
     {
         try
         {
-            await _shipService.DeleteShipAsync(id);
+            await shipService.DeleteShipAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException)

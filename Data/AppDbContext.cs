@@ -76,25 +76,25 @@ namespace MySecureWebApi.Data
                 var captainRank = context.Set<Rank>().FirstOrDefault(c => c.RankName == "Captain");
                 if (captainRank == null)
                 {
-                    context.Set<Rank>().Add(new Rank { RankName = "Captain" });
+                    context.Set<Rank>().Add(new Rank("Captain"));
                 }
 
                 var commander = context.Set<Rank>().FirstOrDefault(r => r.RankName == "Commander");
                 if(commander == null)
                 {
-                    context.Set<Rank>().Add(new Rank { RankName = "Commander" });
+                    context.Set<Rank>().Add(new Rank("Commander"));
                 }
                 
                 var lieutenant = context.Set<Rank>().FirstOrDefault(c => c.RankName == "Lieutenant");
                 if (lieutenant == null)
                 {
-                    context.Set<Rank>().Add(new Rank { RankName = "Lieutenant" });
+                    context.Set<Rank>().Add(new Rank("Lieutenant"));
                 }
 
                 var ensign = context.Set<Rank>().FirstOrDefault(c => c.RankName == "Ensign");
                 if (ensign == null)
                 {
-                    context.Set<Rank>().Add(new Rank { RankName = "Ensign" });
+                    context.Set<Rank>().Add(new Rank("Ensign"));
                 }
 
                 context.SaveChanges();

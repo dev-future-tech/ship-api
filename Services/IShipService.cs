@@ -1,13 +1,12 @@
-using Ships.DTOs;
+using MySecureWebApi.DTOs;
 
-namespace Ships.Services
+namespace MySecureWebApi.Services;
+
+public interface IShipService
 {
-    public interface IShipService
-    {
-        Task<IEnumerable<ShipResponseDto>> GetAllShipsAsync();
-        Task<ShipResponseDto> GetShipByIdAsync(int id);
-        Task AddShipAsync(ShipRequestDto productDto);
-        Task UpdateShipAsync(int id, ShipRequestDto productDto);
-        Task DeleteShipAsync(int id);
-    }
+    Task<IEnumerable<ShipResponseDto>> GetAllShipsAsync();
+    Task<ShipResponseDto> GetShipByIdAsync(int id);
+    Task AddShipAsync(ShipRequestDto productDto);
+    Task UpdateShipAsync(int id, ShipRequestDto productDto);
+    Task DeleteShipAsync(int id);
 }

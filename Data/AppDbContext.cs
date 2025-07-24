@@ -1,20 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
-using Ships.Models;
+using MySecureWebApi.Models;
 
-namespace Ships.Data
+namespace MySecureWebApi.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
             .UseNpgsql()
-            .UseSeeding( (context, _) =>
+            .UseSeeding((context, _) =>
             {
                 // Ships
                 var ship1 = context.Set<Ship>().FirstOrDefault(b => b.Registry == "NCC-74656");
@@ -42,6 +37,7 @@ namespace Ships.Data
                 }
 
                 var ship5 = context.Set<Ship>().FirstOrDefault(b => b.Registry == "NCC-1701-D");
+                if(ship5 == null)
                 {
                     context.Set<Ship>().Add(new Ship { ShipName = "USS Enterprise", Registry = "NCC-1701-D" });
                 }
@@ -50,44 +46,66 @@ namespace Ships.Data
                 var officer1 = context.Set<Officer>().FirstOrDefault(c => c.OfficerName == "Katherine Janeway");
                 if (officer1 == null)
                 {
-                    context.Set<Officer>().Add(new Officer { OfficerName = "Katherine Janeway", Rank = "Captain" });
+                    context.Set<Officer>().Add(new Officer("Katherine Janeway") { Rank = "Captain" });
                 }
 
                 var officer2 = context.Set<Officer>().FirstOrDefault(c => c.OfficerName == "Jean-Luc Picard");
                 if (officer2 == null)
                 {
-                    context.Set<Officer>().Add(new Officer { OfficerName = "Jean-Luc Picard", Rank = "Captain" });
+                    context.Set<Officer>().Add(new Officer("Jean-Luc Picard") { Rank = "Captain" });
                 }
 
                 var officer3 = context.Set<Officer>().FirstOrDefault(c => c.OfficerName == "Benjamin Sisko");
                 if (officer3 == null)
                 {
-                    context.Set<Officer>().Add(new Officer { OfficerName = "Benjamin Sisko", Rank = "Captain" });
+                    context.Set<Officer>().Add(new Officer("Benjamin Sisko") { Rank = "Captain" });
                 }
 
                 var officer4 = context.Set<Officer>().FirstOrDefault(c => c.OfficerName == "Michael Burnham");
                 if (officer4 == null)
                 {
-                    context.Set<Officer>().Add(new Officer { OfficerName = "Michael Burnham", Rank = "Captain" });
+                    context.Set<Officer>().Add(new Officer("Michael Burnham") {Rank = "Captain" });
                 }
 
                 var officer5 = context.Set<Officer>().FirstOrDefault(c => c.OfficerName == "Christopher Pike");
                 if (officer5 == null)
                 {
-                    context.Set<Officer>().Add(new Officer { OfficerName = "Christopher Pike", Rank = "Captain" });
+                    context.Set<Officer>().Add(new Officer("Christopher Pike") { Rank = "Captain" });
                 }
 
+                var captainRank = context.Set<Rank>().FirstOrDefault(c => c.RankName == "Captain");
+                if (captainRank == null)
+                {
+                    context.Set<Rank>().Add(new Rank { RankName = "Captain" });
+                }
+
+                var commander = context.Set<Rank>().FirstOrDefault(r => r.RankName == "Commander");
+                if(commander == null)
+                {
+                    context.Set<Rank>().Add(new Rank { RankName = "Commander" });
+                }
+                
+                var lieutenant = context.Set<Rank>().FirstOrDefault(c => c.RankName == "Lieutenant");
+                if (lieutenant == null)
+                {
+                    context.Set<Rank>().Add(new Rank { RankName = "Lieutenant" });
+                }
+
+                var ensign = context.Set<Rank>().FirstOrDefault(c => c.RankName == "Ensign");
+                if (ensign == null)
+                {
+                    context.Set<Rank>().Add(new Rank { RankName = "Ensign" });
+                }
 
                 context.SaveChanges();
 
-            })
-            .UseAsyncSeeding(async (context, _, cancellationToken) =>
-            {
             });
         }
 
         public DbSet<Ship> Ships { get; set; }
 
         public DbSet<Officer> Officers { get; set; }
+        
+        public DbSet<Rank> Ranks { get; set; }
     }
 }

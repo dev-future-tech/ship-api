@@ -1,77 +1,69 @@
-using Ships.Models;
-using Ships.DTOs;
-using Ships.Repositories;
+using MySecureWebApi.DTOs;
+using MySecureWebApi.Models;
+using MySecureWebApi.Repositories;
 
-namespace Ships.Services
+namespace MySecureWebApi.Services;
+
+public class ShipService(IShipRepository shipRepository) : IShipService
 {
-    public class ShipService : IShipService
+    public async Task AddShipAsync(ShipRequestDto shiptDto)
     {
-        private readonly IShipRepository _shipRepository;
-
-        public ShipService(IShipRepository shipRepository)
+        var ship = new Ship
         {
-            _shipRepository = shipRepository;
-        }
+            ShipId = shiptDto.Id,
+            ShipName = shiptDto.Name,
+            Registry = shiptDto.Registration
+        };
 
-        public async Task AddShipAsync(ShipRequestDto shiptDto)
+        await shipRepository.AddAsync(ship);
+    }
+
+    public async Task DeleteShipAsync(int id)
+    {
+        var ship = shipRepository.GetByIdAsync(id);
+
+        if (ship == null)
+            throw new KeyNotFoundException("Ship not found");
+
+        await shipRepository.DeleteAsync(id);
+    }
+
+    public async Task<IEnumerable<ShipResponseDto>> GetAllShipsAsync()
+    {
+        var ships = await shipRepository.GetAllAsync();
+        return ships.Select(ship => new ShipResponseDto
         {
-            var ship = new Ship
-            {
-                ShipId = shiptDto.Id,
-                ShipName = shiptDto.Name,
-                Registry = shiptDto.Registration
-            };
+            Id = ship.ShipId,
+            Name = ship.ShipName,
+            Registration = ship.Registry
+        });
+    }
 
-            await _shipRepository.AddAsync(ship);
-        }
+    public async Task<ShipResponseDto> GetShipByIdAsync(int id)
+    {
+        var ship = await shipRepository.GetByIdAsync(id);
 
-        public async Task DeleteShipAsync(int id)
+        if (ship == null)
+            throw new KeyNotFoundException("Ship not found");
+
+        return new ShipResponseDto
         {
-            var ship = _shipRepository.GetByIdAsync(id);
+            Id = ship.ShipId,
+            Name = ship.ShipName,
+            Registration = ship.Registry
+        };
+    }
 
-            if (ship == null)
-                throw new KeyNotFoundException("Ship not found");
+    public async Task UpdateShipAsync(int id, ShipRequestDto shipDto)
+    {
+        var ship = await shipRepository.GetByIdAsync(id);
 
-            await _shipRepository.DeleteAsync(id);
-        }
+        if (ship == null)
+            throw new KeyNotFoundException("Ship not found");
 
-        public async Task<IEnumerable<ShipResponseDto>> GetAllShipsAsync()
-        {
-            var ships = await _shipRepository.GetAllAsync();
-            return ships.Select(ship => new ShipResponseDto
-            {
-                Id = ship.ShipId,
-                Name = ship.ShipName,
-                Registration = ship.Registry
-            });
-        }
+        ship.ShipName = shipDto.Name;
 
-        public async Task<ShipResponseDto> GetShipByIdAsync(int id)
-        {
-            var ship = await _shipRepository.GetByIdAsync(id);
+        await shipRepository.UpdateAsync(ship);
 
-            if (ship == null)
-                throw new KeyNotFoundException("Ship not found");
-
-            return new ShipResponseDto
-            {
-                Id = ship.ShipId,
-                Name = ship.ShipName,
-                Registration = ship.Registry
-            };
-        }
-
-        public async Task UpdateShipAsync(int id, ShipRequestDto shipDto)
-        {
-            var ship = await _shipRepository.GetByIdAsync(id);
-
-            if (ship == null)
-                throw new KeyNotFoundException("Ship not found");
-
-            ship.ShipName = shipDto.Name;
-
-            await _shipRepository.UpdateAsync(ship);
-
-        }
     }
 }

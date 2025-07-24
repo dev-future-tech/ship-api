@@ -1,74 +1,75 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Ships.DTOs;
-using Ships.Services;
+using MySecureWebApi.DTOs;
+using MySecureWebApi.Services;
 
-namespace Ships.Controllers
+namespace MySecureWebApi.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class OfficerController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class OfficerController : ControllerBase
+    private readonly IOfficerService _officerService;
+
+    public OfficerController(IOfficerService officerService)
     {
-        private readonly IOfficerService _officerService;
+        _officerService = officerService;
+    }
 
-        public OfficerController(IOfficerService officerService)
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetAll()
+    {
+        var officers = await _officerService.GetAllOfficersAsync();
+        return Ok(officers);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        try
         {
-            _officerService = officerService;
+            var officer = await _officerService.GetOfficerByIdAsync(id);
+            return Ok(officer);
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        catch (KeyNotFoundException)
         {
-            var officers = await _officerService.GetAllOfficersAsync();
-            return Ok(officers);
+            return NotFound();
         }
+    }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+    [HttpPost]
+    public async Task<IActionResult> Add(OfficerRequestDto officerRequestDto)
+    {
+        await _officerService.AddOfficerAsync(officerRequestDto);
+        return CreatedAtAction(nameof(GetById), new { id = officerRequestDto.Id }, officerRequestDto);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update(int id, OfficerRequestDto officerRequestDto)
+    {
+        try
         {
-            try
-            {
-                var officer = await _officerService.GetOfficerByIdAsync(id);
-                return Ok(officer);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            await _officerService.UpdateOfficerAsync(id, officerRequestDto);
+            return NoContent();
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Add(OfficerRequestDto officerRequestDto)
+        catch (KeyNotFoundException)
         {
-            await _officerService.AddOfficerAsync(officerRequestDto);
-            return CreatedAtAction(nameof(GetById), new { id = officerRequestDto.Id }, officerRequestDto);
+            return NotFound();
         }
+    }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(int id, OfficerRequestDto officerRequestDto)
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
         {
-            try
-            {
-                await _officerService.UpdateOfficerAsync(id, officerRequestDto);
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            await _officerService.DeleteOfficerAsync(id);
+            return NoContent();
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        catch (KeyNotFoundException)
         {
-            try
-            {
-                await _officerService.DeleteOfficerAsync(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            return NotFound();
         }
     }
 }

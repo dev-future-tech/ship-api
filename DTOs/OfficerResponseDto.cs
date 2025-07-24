@@ -1,11 +1,10 @@
-namespace Ships.DTOs
+namespace MySecureWebApi.DTOs;
+
+public class OfficerResponseDto
 {
-    public class OfficerResponseDto
-    {
-        public int OfficerId { set; get; }
-        public required String OfficerName { set; get; }
+    public int OfficerId { set; get; }
+    public required string OfficerName { set; get; }
 
-        public String? OfficerRank { get; set; }
+    public string? OfficerRank { get; set; }
 
-    }
 }

@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Ships.Data;
-using Ships.Repositories;
-using Ships.Security;
-using Ships.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MySecureWebApi.Data;
+using MySecureWebApi.Repositories;
+using MySecureWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +39,10 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    options.MetadataAddress = $"{authBaseUrl}/auth/realms/{realm}/.well-known/openid-configuration";
+    options.RequireHttpsMetadata = false; // Only in develop environment
+    options.Authority = $"{authBaseUrl}/auth/realms/{realm}";
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -61,13 +64,11 @@ builder.Services.AddAuthentication(options =>
             return keys.GetSigningKeys();
         }
     };
-
-    options.RequireHttpsMetadata = false; // Only in develop environment
+    options.Audience = "Account";
     options.SaveToken = true;
 });
 
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<KeycloakAuthService>();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -90,8 +91,3 @@ using (var scope = app.Services.CreateScope())
 }
 app.MapControllers();
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

@@ -1,13 +1,12 @@
-using Ships.Models;
+using MySecureWebApi.Models;
 
-namespace Ships.Repositories
+namespace MySecureWebApi.Repositories;
+
+public interface IShipRepository
 {
-    public interface IShipRepository
-    {
-        Task<IEnumerable<Ship>> GetAllAsync();
-        Task<Ship> GetByIdAsync(int id);
-        Task AddAsync(Ship ship);
-        Task UpdateAsync(Ship ship);
-        Task DeleteAsync(int shipId);
-    }
+    Task<IEnumerable<Ship>> GetAllAsync();
+    Task<Ship> GetByIdAsync(int id);
+    Task AddAsync(Ship ship);
+    Task UpdateAsync(Ship ship);
+    Task DeleteAsync(int shipId);
 }

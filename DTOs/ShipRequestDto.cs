@@ -1,10 +1,9 @@
-namespace Ships.DTOs
-{
-    public class ShipRequestDto
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+namespace MySecureWebApi.DTOs;
 
-        public string? Registration { get; set; }
-    }
+public class ShipRequestDto
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
+
+    public string? Registration { get; set; }
 }

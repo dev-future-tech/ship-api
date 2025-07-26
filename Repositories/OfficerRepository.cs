@@ -29,7 +29,11 @@ public class OfficerRepository(AppDbContext context) : IOfficerRepository
 
     public async Task<Officer> GetByIdAsync(int id)
     {
-        return await context.Officers.FindAsync(id)?? new Officer("Not Found");
+        var officer = await context.Officers.FindAsync(id);
+        if (officer == null)
+            throw new KeyNotFoundException($"Officer not found: {id}");
+
+        return officer;
     }
 
     public async Task UpdateAsync(Officer officer)

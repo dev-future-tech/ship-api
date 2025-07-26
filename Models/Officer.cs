@@ -4,16 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MySecureWebApi.Models;
 
 [Table("officers")]
-public class Officer(string officerName)
+public class Officer
 {
     [Column("officer_id")]
     public int OfficerId { get; init; }
     
     [Column("officer_name")]
     [MaxLength(50)]
-    public string OfficerName { get; set; } = officerName;
+    public string? OfficerName { get; set; }
+    
+    public int OfficerRankId { get; set; }
 
-    [Column("officer_rank")]
-    [MaxLength(35)]
-    public string? Rank { get; set; }
+    public virtual Rank OfficerRank { get; set; } =  null!;
 }

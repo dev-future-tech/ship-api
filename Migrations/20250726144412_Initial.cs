@@ -12,26 +12,12 @@ namespace MySecureWebApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "officers",
-                columns: table => new
-                {
-                    officer_id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    officer_name = table.Column<string>(type: "text", nullable: false),
-                    officer_rank = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_officers", x => x.officer_id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ranks",
                 columns: table => new
                 {
                     rank_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    rank_name = table.Column<string>(type: "text", nullable: true)
+                    rank_name = table.Column<string>(type: "character varying(25)", maxLength: 25, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,6 +37,25 @@ namespace MySecureWebApi.Migrations
                 {
                     table.PrimaryKey("PK_ships", x => x.ship_id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "officers",
+                columns: table => new
+                {
+                    officer_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    officer_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    OfficerRankId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_officers", x => x.officer_id);
+                    table.ForeignKey(
+                        name: "FK_officers_ranks_OfficerRankId",
+                        column: x => x.OfficerRankId,
+                        principalTable: "ranks",
+                        principalColumn: "rank_id");
+                });
         }
 
         /// <inheritdoc />
@@ -60,10 +65,10 @@ namespace MySecureWebApi.Migrations
                 name: "officers");
 
             migrationBuilder.DropTable(
-                name: "ranks");
+                name: "ships");
 
             migrationBuilder.DropTable(
-                name: "ships");
+                name: "ranks");
         }
     }
 }

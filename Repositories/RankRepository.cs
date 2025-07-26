@@ -13,9 +13,18 @@ public class RankRepository(AppDbContext context) : IRankRepository
 
     public async Task<Rank> GetRankByIdAsync(int id)
     {
-        return await context.Ranks.FindAsync(id)?? new Rank("Not found");;
+        return await context.Ranks.FindAsync(id)?? new Rank("Not found");
     }
 
+    public async Task<Rank> GetRankByNameAsync(string name)
+    {
+        var rank = await context.Ranks.Where(c => c.RankName.Equals(name) ).FirstOrDefaultAsync();
+        if (rank == null)
+            throw new KeyNotFoundException($"No rank by the name {name}");
+        
+        return rank;
+    }
+    
     public async Task AddRankAsync(Rank rank)
     {
         await context.Ranks.AddAsync(rank);

@@ -4,15 +4,29 @@ using MySecureWebApi.Repositories;
 
 namespace MySecureWebApi.Services;
 
-public class OfficerService(IOfficerRepository officerRepository) : IOfficerService
+public class OfficerService(IOfficerRepository officerRepository, IRankRepository rankRepository) : IOfficerService
 {
     public async Task AddOfficerAsync(OfficerRequestDto officerRequestDto)
     {
-        var officer = new Officer(officerRequestDto.OfficerName)
+        try
         {
-            Rank = officerRequestDto.OfficerRank
-        };
-        await officerRepository.AddAsync(officer);
+            var rank = await rankRepository.GetRankByNameAsync(officerRequestDto.OfficerRank);
+            var officer = new Officer
+            {
+                OfficerName = officerRequestDto.OfficerName,
+                OfficerRankId = rank.RankId,
+                OfficerRank = rank
+            };
+            await officerRepository.AddAsync(officer);
+            
+        }
+        catch (KeyNotFoundException ex)
+        {
+            throw new CreateOfficerException($"Rank not found to tbe allocated: {ex.Message}");
+        }
+        
+        
+            
     }
 
     public async Task DeleteOfficerAsync(int id)
@@ -33,7 +47,7 @@ public class OfficerService(IOfficerRepository officerRepository) : IOfficerServ
         {
             OfficerId = p.OfficerId,
             OfficerName = p.OfficerName,
-            OfficerRank = p.Rank
+            OfficerRank = p.OfficerRank
         });
     }
 
@@ -43,23 +57,31 @@ public class OfficerService(IOfficerRepository officerRepository) : IOfficerServ
 
         if (officer == null)
             throw new KeyNotFoundException("Officer not found");
+        
         return new OfficerResponseDto
         {
             OfficerId = officer.OfficerId,
             OfficerName = officer.OfficerName,
-            OfficerRank = officer.Rank
+            OfficerRank = officer.OfficerRank,
         };
     }
 
     public async Task UpdateOfficerAsync(int id, OfficerRequestDto officerRequestDto)
     {
+        var rank = await rankRepository.GetRankByNameAsync(officerRequestDto.OfficerRank);
+        if (rank == null)
+        {
+            throw new UpdateOfficerException($"Rank {officerRequestDto.OfficerRank} not found to tbe allocated");
+        }
+        
         var officer = await officerRepository.GetByIdAsync(id);
 
         if (officer == null)
             throw new KeyNotFoundException("Officer not found");
 
         officer.OfficerName = officerRequestDto.OfficerName;
-        officer.Rank = officerRequestDto.OfficerRank;
+        officer.OfficerRankId = rank.RankId;
+        officer.OfficerRank = rank;
 
         await officerRepository.UpdateAsync(officer);
     }

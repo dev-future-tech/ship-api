@@ -31,13 +31,12 @@ namespace MySecureWebApi.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OfficerId"));
 
                     b.Property<string>("OfficerName")
-                        .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
                         .HasColumnName("officer_name");
 
-                    b.Property<string>("Rank")
-                        .HasColumnType("text")
-                        .HasColumnName("officer_rank");
+                    b.Property<int>("OfficerRankId")
+                        .HasColumnType("integer");
 
                     b.HasKey("OfficerId");
 
@@ -54,7 +53,9 @@ namespace MySecureWebApi.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RankId"));
 
                     b.Property<string>("RankName")
-                        .HasColumnType("text")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)")
                         .HasColumnName("rank_name");
 
                     b.HasKey("RankId");
@@ -82,6 +83,21 @@ namespace MySecureWebApi.Migrations
                     b.HasKey("ShipId");
 
                     b.ToTable("ships");
+                });
+
+            modelBuilder.Entity("MySecureWebApi.Models.Officer", b =>
+                {
+                    b.HasOne("MySecureWebApi.Models.Rank", "OfficerRank")
+                        .WithMany("Officers")
+                        .HasForeignKey("OfficerRankId")
+                        .IsRequired();
+
+                    b.Navigation("OfficerRank");
+                });
+
+            modelBuilder.Entity("MySecureWebApi.Models.Rank", b =>
+                {
+                    b.Navigation("Officers");
                 });
 #pragma warning restore 612, 618
         }

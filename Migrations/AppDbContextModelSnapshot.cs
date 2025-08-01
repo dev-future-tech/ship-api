@@ -36,7 +36,8 @@ namespace MySecureWebApi.Migrations
                         .HasColumnName("officer_name");
 
                     b.Property<int>("OfficerRankId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("officer_rank_id");
 
                     b.HasKey("OfficerId");
 
@@ -88,16 +89,11 @@ namespace MySecureWebApi.Migrations
             modelBuilder.Entity("MySecureWebApi.Models.Officer", b =>
                 {
                     b.HasOne("MySecureWebApi.Models.Rank", "OfficerRank")
-                        .WithMany("Officers")
+                        .WithMany()
                         .HasForeignKey("OfficerRankId")
                         .IsRequired();
 
                     b.Navigation("OfficerRank");
-                });
-
-            modelBuilder.Entity("MySecureWebApi.Models.Rank", b =>
-                {
-                    b.Navigation("Officers");
                 });
 #pragma warning restore 612, 618
         }

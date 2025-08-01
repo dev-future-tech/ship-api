@@ -7,20 +7,13 @@ namespace MySecureWebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class OfficerController : ControllerBase
+public class OfficerController(IOfficerService officerService) : ControllerBase
 {
-    private readonly IOfficerService _officerService;
-
-    public OfficerController(IOfficerService officerService)
-    {
-        _officerService = officerService;
-    }
-
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetAll()
     {
-        var officers = await _officerService.GetAllOfficersAsync();
+        var officers = await officerService.GetAllOfficersAsync();
         return Ok(officers);
     }
 
@@ -29,7 +22,7 @@ public class OfficerController : ControllerBase
     {
         try
         {
-            var officer = await _officerService.GetOfficerByIdAsync(id);
+            var officer = await officerService.GetOfficerByIdAsync(id);
             return Ok(officer);
         }
         catch (KeyNotFoundException)
@@ -41,7 +34,8 @@ public class OfficerController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Add(OfficerRequestDto officerRequestDto)
     {
-        await _officerService.AddOfficerAsync(officerRequestDto);
+        var officerId = await officerService.AddOfficerAsync(officerRequestDto);
+        officerRequestDto.Id = officerId;
         return CreatedAtAction(nameof(GetById), new { id = officerRequestDto.Id }, officerRequestDto);
     }
 
@@ -50,7 +44,7 @@ public class OfficerController : ControllerBase
     {
         try
         {
-            await _officerService.UpdateOfficerAsync(id, officerRequestDto);
+            await officerService.UpdateOfficerAsync(id, officerRequestDto);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -64,7 +58,7 @@ public class OfficerController : ControllerBase
     {
         try
         {
-            await _officerService.DeleteOfficerAsync(id);
+            await officerService.DeleteOfficerAsync(id);
             return NoContent();
         }
         catch (KeyNotFoundException)

@@ -45,14 +45,14 @@ namespace MySecureWebApi.Migrations
                     officer_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     officer_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    OfficerRankId = table.Column<int>(type: "integer", nullable: false)
+                    officer_rank_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_officers", x => x.officer_id);
                     table.ForeignKey(
-                        name: "FK_officers_ranks_OfficerRankId",
-                        column: x => x.OfficerRankId,
+                        name: "FK_officers_ranks_officer_rank_id",
+                        column: x => x.officer_rank_id,
                         principalTable: "ranks",
                         principalColumn: "rank_id");
                 });

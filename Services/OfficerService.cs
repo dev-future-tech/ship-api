@@ -6,7 +6,7 @@ namespace MySecureWebApi.Services;
 
 public class OfficerService(IOfficerRepository officerRepository, IRankRepository rankRepository) : IOfficerService
 {
-    public async Task AddOfficerAsync(OfficerRequestDto officerRequestDto)
+    public async Task<int> AddOfficerAsync(OfficerRequestDto officerRequestDto)
     {
         try
         {
@@ -17,7 +17,8 @@ public class OfficerService(IOfficerRepository officerRepository, IRankRepositor
                 OfficerRankId = rank.RankId,
                 OfficerRank = rank
             };
-            await officerRepository.AddAsync(officer);
+            var savedOfficerId = await officerRepository.AddAsync(officer);
+            return savedOfficerId;
             
         }
         catch (KeyNotFoundException ex)
@@ -42,12 +43,13 @@ public class OfficerService(IOfficerRepository officerRepository, IRankRepositor
     public async Task<IEnumerable<OfficerResponseDto>> GetAllOfficersAsync()
     {
         var officers = await officerRepository.GetAllAsync();
+        
 
         return officers.Select(p => new OfficerResponseDto
         {
             OfficerId = p.OfficerId,
-            OfficerName = p.OfficerName,
-            OfficerRank = p.OfficerRank
+            OfficerName = p.OfficerName ?? "",
+            OfficerRank = p.OfficerRank.RankName
         });
     }
 
@@ -61,8 +63,8 @@ public class OfficerService(IOfficerRepository officerRepository, IRankRepositor
         return new OfficerResponseDto
         {
             OfficerId = officer.OfficerId,
-            OfficerName = officer.OfficerName,
-            OfficerRank = officer.OfficerRank,
+            OfficerName = officer.OfficerName ?? "",
+            OfficerRank = officer.OfficerRank.RankName,
         };
     }
 

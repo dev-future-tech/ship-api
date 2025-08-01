@@ -13,6 +13,7 @@ public class Officer
     [MaxLength(50)]
     public string? OfficerName { get; set; }
     
+    [Column("officer_rank_id")]
     public int OfficerRankId { get; set; }
 
     public virtual Rank OfficerRank { get; set; } =  null!;

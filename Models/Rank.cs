@@ -14,6 +14,6 @@ public class Rank(string rankName)
     [MaxLength(25)]
     public string RankName { get; set; } = rankName;
 
-    public virtual ICollection<Officer> Officers { get; set; } = new List<Officer>();
+    // public virtual ICollection<Officer> Officers { get; set; } = new List<Officer>();
 
 }

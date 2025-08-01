@@ -6,5 +6,5 @@ public class OfficerResponseDto()
 {
     public int OfficerId { set; get; }
     public required string OfficerName { set; get; }
-    public Rank? OfficerRank { get; set; }
+    public string? OfficerRank { get; set; }
 }

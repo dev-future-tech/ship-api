@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MySecureWebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250726144412_Initial")]
+    [Migration("20250726172240_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -39,7 +39,8 @@ namespace MySecureWebApi.Migrations
                         .HasColumnName("officer_name");
 
                     b.Property<int>("OfficerRankId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("officer_rank_id");
 
                     b.HasKey("OfficerId");
 
@@ -91,16 +92,11 @@ namespace MySecureWebApi.Migrations
             modelBuilder.Entity("MySecureWebApi.Models.Officer", b =>
                 {
                     b.HasOne("MySecureWebApi.Models.Rank", "OfficerRank")
-                        .WithMany("Officers")
+                        .WithMany()
                         .HasForeignKey("OfficerRankId")
                         .IsRequired();
 
                     b.Navigation("OfficerRank");
-                });
-
-            modelBuilder.Entity("MySecureWebApi.Models.Rank", b =>
-                {
-                    b.Navigation("Officers");
                 });
 #pragma warning restore 612, 618
         }

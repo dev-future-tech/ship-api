@@ -6,10 +6,11 @@ namespace MySecureWebApi.Repositories;
 
 public class OfficerRepository(AppDbContext context) : IOfficerRepository
 {
-    public async Task AddAsync(Officer officer)
+    public async Task<int> AddAsync(Officer officer)
     {
         await context.Officers.AddAsync(officer);
         await context.SaveChangesAsync();
+        return officer.OfficerId;
     }
 
     public async Task DeleteAsync(int officerId)
@@ -24,12 +25,16 @@ public class OfficerRepository(AppDbContext context) : IOfficerRepository
 
     public async Task<IEnumerable<Officer>> GetAllAsync()
     {
-        return await context.Officers.ToListAsync();
+        return await context.Officers
+            .Include(officer => officer.OfficerRank)
+            .ToListAsync();
     }
 
     public async Task<Officer> GetByIdAsync(int id)
     {
-        var officer = await context.Officers.FindAsync(id);
+        var officer = await context.Officers
+            .Include(officer => officer.OfficerRank)
+            .FirstOrDefaultAsync(u => u.OfficerId == id);
         if (officer == null)
             throw new KeyNotFoundException($"Officer not found: {id}");
 

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySecureWebApi.DTOs;
 using MySecureWebApi.Services;
@@ -9,6 +10,7 @@ namespace MySecureWebApi.Controllers;
 public class ShipController(IShipService shipService) : ControllerBase
 {
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         var ships = await shipService.GetAllShipsAsync();
@@ -16,6 +18,7 @@ public class ShipController(IShipService shipService) : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -30,6 +33,7 @@ public class ShipController(IShipService shipService) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Add([FromBody] ShipRequestDto shipDto)
     {
         await shipService.AddShipAsync(shipDto);
@@ -37,6 +41,7 @@ public class ShipController(IShipService shipService) : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, [FromBody] ShipRequestDto shipDto)
     {
         try
@@ -51,6 +56,7 @@ public class ShipController(IShipService shipService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         try

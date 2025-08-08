@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MySecureWebApi.DTOs;
 using MySecureWebApi.Services;
@@ -24,6 +25,7 @@ public class RankController(IRankService rankService): ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -38,6 +40,7 @@ public class RankController(IRankService rankService): ControllerBase
     }
     
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> AddRank([FromBody] RankRequestDto rankRequestDto)
     {
         await rankService.AddRankAsync(rankRequestDto);
@@ -45,6 +48,7 @@ public class RankController(IRankService rankService): ControllerBase
     }
 
     [HttpPut("id")]
+    [Authorize]
     public async Task<IActionResult> UpdateRank(int id, [FromBody] RankRequestDto rankRequestDto)
     {
         try
@@ -58,6 +62,8 @@ public class RankController(IRankService rankService): ControllerBase
         }
     }
 
+    [HttpDelete]
+    [Authorize]
     public async Task<IActionResult> DeleteRank(int id)
     {
         try

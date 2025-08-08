@@ -18,6 +18,7 @@ public class OfficerController(IOfficerService officerService) : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -32,6 +33,7 @@ public class OfficerController(IOfficerService officerService) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Add(OfficerRequestDto officerRequestDto)
     {
         var officerId = await officerService.AddOfficerAsync(officerRequestDto);
@@ -40,6 +42,7 @@ public class OfficerController(IOfficerService officerService) : ControllerBase
     }
 
     [HttpPut]
+    [Authorize]
     public async Task<IActionResult> Update(int id, OfficerRequestDto officerRequestDto)
     {
         try
@@ -54,6 +57,7 @@ public class OfficerController(IOfficerService officerService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         try

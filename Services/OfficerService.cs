@@ -53,6 +53,17 @@ public class OfficerService(IOfficerRepository officerRepository, IRankRepositor
         });
     }
 
+    public async Task<IEnumerable<OfficerResponseDto>> GetAllOfficersWithRankAsync(string rankName)
+    {
+        var officers = await officerRepository.GetOfficersByQueryAsync(rankName);
+        return officers.Select(p => new OfficerResponseDto
+        {
+            OfficerId = p.OfficerId,
+            OfficerName = p.OfficerName ?? "",
+            OfficerRank = p.OfficerRank.RankName
+        });;
+    }
+
     public async Task<OfficerResponseDto> GetOfficerByIdAsync(int id)
     {
         var officer = await officerRepository.GetByIdAsync(id);

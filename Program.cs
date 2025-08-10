@@ -1,11 +1,13 @@
+using System.Security.Claims;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MySecureWebApi.Data;
 using MySecureWebApi.Repositories;
+using MySecureWebApi.security;
 using MySecureWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,11 +46,28 @@ builder.Services.AddScoped<IOfficerService, OfficerService>();
 builder.Services.AddScoped<IRankRepository, RankRepository>();
 builder.Services.AddScoped<IRankService, RankService>();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration);
+if (!builder.Environment.IsDevelopment())
+{
+    var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.Authority = domain;
+            options.Audience = builder.Configuration["Auth0:Audience"];
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                NameClaimType = ClaimTypes.NameIdentifier
+            };
+        });
 
-builder.Services.AddAuthorization();
-
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("read:ships", policy => policy.Requirements.Add(new HasScopeRequirement("read:ships", domain)));
+        options.AddPolicy("read:ranks", policy => policy.Requirements.Add(new HasScopeRequirement("read:ranks", domain)));
+        options.AddPolicy("read:officers", policy => policy.Requirements.Add(new HasScopeRequirement("read:officers", domain)));
+    
+    });
+}
 
 var app = builder.Build();
 
@@ -59,8 +78,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
 
 
 using (var scope = app.Services.CreateScope())
@@ -69,5 +92,10 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync();
 
 }
-app.MapControllers();
+
+if(app.Environment.IsDevelopment())
+    app.MapControllers().AllowAnonymous();
+else
+    app.MapControllers();
+
 app.Run();

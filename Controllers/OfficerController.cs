@@ -9,16 +9,32 @@ namespace MySecureWebApi.Controllers;
 [Route("api/[controller]")]
 public class OfficerController(IOfficerService officerService) : ControllerBase
 {
+    // [HttpGet]
+    // [Authorize]
+    // public async Task<IActionResult> GetAll()
+    // {
+    //     var officers = await officerService.GetAllOfficersAsync();
+    //     return Ok(officers);
+    // }
+
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetByQuery([FromQuery] OfficerQuery query)
     {
-        var officers = await officerService.GetAllOfficersAsync();
-        return Ok(officers);
+        if (query.rankName == null)
+        {
+            var officers = await officerService.GetAllOfficersAsync();
+            return Ok(officers);
+        }
+        else
+        {
+            var officers = await officerService.GetAllOfficersWithRankAsync(query!.rankName);
+            return Ok(officers);
+        }
     }
 
     [HttpGet("{id}")]
-    [Authorize]
+    [Authorize("read:officers")]
     public async Task<IActionResult> GetById(int id)
     {
         try

@@ -13,6 +13,16 @@ public class OfficerRepository(AppDbContext context) : IOfficerRepository
         return officer.OfficerId;
     }
 
+    public async Task<IEnumerable<Officer>> GetOfficersByQueryAsync(string rankName)
+    {
+        var rankedOfficers = await context.Officers
+            .Include(officer => officer.OfficerRank)
+            .Where(c => c.OfficerRank.RankName.Equals(rankName) )
+            .OrderBy(c => c.OfficerName)
+            .ToListAsync();
+        return rankedOfficers;
+    }
+
     public async Task DeleteAsync(int officerId)
     {
         var officer = await context.Officers.FindAsync(officerId);

@@ -11,6 +11,7 @@ public class RankController(IRankService rankService): ControllerBase
 {
 
     [HttpGet]
+    [Authorize("read:ranks")]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -25,7 +26,7 @@ public class RankController(IRankService rankService): ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize]
+    [Authorize("read:ranks")]
     public async Task<IActionResult> GetById(int id)
     {
         try

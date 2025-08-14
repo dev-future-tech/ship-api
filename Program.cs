@@ -12,6 +12,17 @@ using MySecureWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .WithMethods(["POST", "GET", "PUT", "DELETE", "OPTIONS"])
+            .AllowCredentials();
+    });
+});
+
 // Configure Key Vault
 var keyVaultUri = builder.Configuration["Vault:VaultURI"];
 Console.WriteLine($"KeyVaultUri: {keyVaultUri}");
@@ -69,6 +80,9 @@ if (!builder.Environment.IsDevelopment())
     });
 }
 
+// ADd SignalR WebSockets
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -78,6 +92,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
 
 if (!app.Environment.IsDevelopment())
 {
@@ -97,5 +112,7 @@ if(app.Environment.IsDevelopment())
     app.MapControllers().AllowAnonymous();
 else
     app.MapControllers();
+
+app.MapHub<ChatHub>("/Chat");
 
 app.Run();

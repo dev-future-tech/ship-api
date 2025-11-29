@@ -2,75 +2,71 @@ using Ships.Models;
 using Ships.DTOs;
 using Ships.Repositories;
 
-namespace Ships.Services
+namespace Ships.Services;
+
+public class OfficerService(IOfficerRepository officerRepository) : IOfficerService
 {
-    public class OfficerService : IOfficerService
+    public async Task AddOfficerAsync(OfficerRequestDto officerRequestDto)
     {
-        private readonly IOfficerRepository _officerRepository;
-
-        public OfficerService(IOfficerRepository officerRepository)
+        var officer = new Officer
         {
-            _officerRepository = officerRepository;
-        }
+            OfficerId = officerRequestDto.Id,
+            OfficerName = officerRequestDto.OfficerName,
+            Rank = officerRequestDto.OfficerRank
+        };
+        await officerRepository.AddAsync(officer);
+    }
 
-        public async Task AddOfficerAsync(OfficerRequestDto officerRequestDto)
-        {
-            var officer = new Officer
-            {
-                OfficerId = officerRequestDto.Id,
-                OfficerName = officerRequestDto.OfficerName,
-                Rank = officerRequestDto.OfficerRank
-            };
-            await _officerRepository.AddAsync(officer);
-        }
-
-        public async Task DeleteOfficerAsync(int id)
-        {
-            var officer = _officerRepository.GetByIdAsync(id);
+    public async Task DeleteOfficerAsync(int id)
+    {
+        try {
+            var officer = await officerRepository.GetByIdAsync(id);
 
             if (officer == null)
                 throw new KeyNotFoundException("Officer nit found");
 
-            await _officerRepository.DeleteAsync(id);
+            await officerRepository.DeleteAsync(id);
+        } catch (Exception) {
+            throw new Exception("Officer not found");
         }
+    }
 
-        public async Task<IEnumerable<OfficerResponseDto>> GetAllOfficersAsync()
+    public async Task<IEnumerable<OfficerResponseDto>> GetAllOfficersAsync()
+    {
+        var officers = await officerRepository.GetAllAsync();
+
+        return officers.Select(p => new OfficerResponseDto
         {
-            var officers = await _officerRepository.GetAllAsync();
+            OfficerId = p.OfficerId,
+            OfficerName = p.OfficerName,
+            OfficerRank = p.Rank
+        });
+    }
 
-            return officers.Select(p => new OfficerResponseDto
-            {
-                OfficerId = p.OfficerId,
-                OfficerName = p.OfficerName,
-                OfficerRank = p.Rank
-            });
-        }
+    public async Task<OfficerResponseDto> GetOfficerByIdAsync(int id)
+    {
+        var officer = await officerRepository.GetByIdAsync(id);
 
-        public async Task<OfficerResponseDto> GetOfficerByIdAsync(int id)
+        if (officer == null)
+            throw new KeyNotFoundException("Officer not found");
+        return new OfficerResponseDto
         {
-            var officer = await _officerRepository.GetByIdAsync(id);
+            OfficerId = officer.OfficerId,
+            OfficerName = officer.OfficerName,
+            OfficerRank = officer.Rank
+        };
+    }
 
-            if (officer == null)
-                throw new KeyNotFoundException("Officer not found");
-            return new OfficerResponseDto
-            {
-                OfficerId = officer.OfficerId,
-                OfficerName = officer.OfficerName,
-                OfficerRank = officer.Rank
-            };
-        }
+    public async Task UpdateOfficerAsync(int id, OfficerRequestDto officerRequestDto)
+    {
+        var officer = await officerRepository.GetByIdAsync(id);
 
-        public async Task UpdateOfficerAsync(int id, OfficerRequestDto officerRequestDto)
-        {
-            var officer = await _officerRepository.GetByIdAsync(id);
+        if (officer == null)
+            throw new KeyNotFoundException("Officer not found");
 
-            if (officer == null)
-                throw new KeyNotFoundException("Officer not found");
+        officer.OfficerName = officerRequestDto.OfficerName;
+        officer.Rank = officerRequestDto.OfficerRank;
 
-            officer.OfficerName = officerRequestDto.OfficerName;
-            officer.Rank = officerRequestDto.OfficerRank;
-
-            await _officerRepository.UpdateAsync(officer);
-        }
+        await officerRepository.UpdateAsync(officer);
     }
 }

@@ -7,7 +7,7 @@ namespace Ships.Models
     {
         [Column("officer_id")]
         public int OfficerId { get; set; }
-        public String? OfficerName { get; set; }
+        public required String OfficerName { get; set; }
         public String? Rank { get; set; }
     }
 }
